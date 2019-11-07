@@ -1,2 +1,2 @@
-# simrik
-Project simrik cloud
+# DEU
+Project deu cloud api helpers
