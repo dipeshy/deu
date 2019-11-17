@@ -1,16 +1,30 @@
 #!/usr/bin/env node
-/**
- * Module dependencies.
- */
+
 import { Router } from 'express';
 import * as http from 'http';
 import { resolve } from 'path';
+import yargs from 'yargs';
 import { createApp } from './app';
 import { debug } from './utils/debug';
 
-const cwd = process.cwd();
-const mainFile = resolve(cwd, 'main.js');
-const templateDir = resolve(cwd, 'templates');
+const argv = yargs
+    .usage('Usage: [-d app-dir] [-p port]')
+    .alias('d', ['app-dir'])
+    .alias('p', ['port'])
+    .default({
+        d: process.cwd(),
+        p: '4086',
+    })
+    .argv;
+
+// =========
+// Variables
+// =========
+const appPath = argv.d;
+const port = normalizePort(process.env.PORT || argv.p);
+
+const mainFile = resolve(appPath, 'main.js');
+const templateDir = resolve(appPath, 'templates');
 
 const { app, router } = createApp({ templateDir, });
 
@@ -18,12 +32,11 @@ export namespace Mimic {
     export const root: Router = router;
 }
 
-debug(`Current working dir: ${cwd}`);
+debug(`Current working dir: ${appPath}`);
 require(mainFile);
 /**
  * Get port from environment and store in Express.
  */
-const port = normalizePort(process.env.PORT || '4086');
 app.set('port', port);
 
 /**

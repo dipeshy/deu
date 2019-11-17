@@ -16,9 +16,6 @@ export interface Output {
 }
 
 export function createApp({ templateDir }: Options): Output {
-    // var indexRouter = require('./routes/index');
-    // var usersRouter = require('./routes/users');
-
     const app: express.Express = express();
 
     // view engine setup
