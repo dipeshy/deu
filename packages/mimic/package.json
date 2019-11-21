@@ -19,7 +19,7 @@
     "directory": "packages/mimic"
   },
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "DEBUG=mimic* node .",
     "dev": "nodemon",
     "build": "tsc -p tsconfig.json",
     "example": "cd example && DEBUG=mimic* node ../dist/index.js -p 4008"

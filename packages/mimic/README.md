@@ -4,6 +4,44 @@ Service to create mockserver with with zero configuration.
 Mimic uses express server with useful middlewares to provide simple
 application to create mock responses.
 
+# Getting started
+```bash
+# Create app folder with templates
+mkdir -p mock/templates
+
+# Init npm
+cd mock && npm init -y
+
+# Install
+npm i @deu/mimic
+npx mimic --version
+npx mimic --help
+
+# Create main file
+cat << EOF > main.js
+const { Mimic } = require('@deu/mimic');
+Mimic.root.get('/greet', (req, res) => {
+    res.json({
+        data: 'hello world!'
+    })
+});
+EOF
+
+# Start mimic
+DEBUG=mimic* npx mimic
+
+# To use separate base folder
+mkdir subfolder
+mv templates subfolder/
+mv main.js subfolder/
+# mock/subfolder/
+# ├── main.js
+# └── templates
+
+# Start mocking application in another folder and port
+DEBUG=mimic* npx mimic -d subfolder -p 3000
+```
+
 # Usage
 
 ```javascript
