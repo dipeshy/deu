@@ -2,8 +2,9 @@ import * as bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import express, { NextFunction, Request, Response, Router } from 'express';
 import createError from 'http-errors';
-import logger from 'morgan';
-import { debug } from './utils/debug';
+import { log } from './lib/logger';
+import { requestHashMiddleWare } from './middlewares/request-hash';
+import { requestLoggerMiddleware } from './middlewares/request-logger';
 import { parseXML } from './utils/xml-parser';
 
 export interface Options {
@@ -20,24 +21,26 @@ export function createApp({ templateDir }: Options): Output {
 
     // view engine setup
     // tslint:disable-next-line: no-console
-    debug(`Template dir: ${templateDir}`);
+    log(`Template dir: ${templateDir}`);
     app.set('views', templateDir);
     app.set('view engine', 'ejs');
-    app.use(logger('dev'));
     app.use(express.json());
     app.use(express.urlencoded({ extended: false }));
     app.use(cookieParser());
 
-    const router = Router();
+    // Middleware to log incoming request
+    app.use(requestLoggerMiddleware());
 
-    router.use(bodyParser.text({
+    // Handle xml content type
+    app.use(bodyParser.text({
         type: '*/xml',
     }));
 
-    router.use((req: Request, resp: Response, next: NextFunction) => {
+    // Middleware to parse xml to jsondocument
+    app.use((req: Request, resp: Response, next: NextFunction) => {
         const contentType: string = req.headers['content-type'] || '';
 
-        if (contentType.match(/\/xml$/)) {
+        if (contentType.match(/\/xml(;.+)?$/)) {
             resp.locals.xmlJson = parseXML({
                 attrNodeName: false,
                 ignoreNameSpace: true,
@@ -46,6 +49,10 @@ export function createApp({ templateDir }: Options): Output {
         next();
     });
 
+    // Middleware to create hashes from request attributes
+    app.use(requestHashMiddleWare());
+
+    const router = Router();
     app.use('/', router);
 
     // Response default /health route

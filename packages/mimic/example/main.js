@@ -1,7 +1,5 @@
 const { Mimic } = require('@deu/mimic');
 
-
-
 Mimic.root.get('/greet', (req, res) => {
     res.json({
         data: 'hello world!'
@@ -20,3 +18,20 @@ Mimic.root.post('/users/:userId', (req, res) => {
         user: users[userId - 1]
     });
 });
+
+
+const fruits = {
+    "af7f992f-8489a5de": { name: 'apple' },
+    "af7f992f-84a91dee": { name: 'banana' },
+}
+
+Mimic.root.post('/fruits', (req, res) => {
+    const requestHash = res.locals.requestHash.combined;
+    const data = fruits[requestHash];
+    if (!data) {
+        throw Error('Not found');
+    }
+    res.json(data);
+});
+
+

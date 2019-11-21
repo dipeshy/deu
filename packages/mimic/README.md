@@ -55,3 +55,40 @@ Mimic.root.post('/users/:userId', (req, res) => {
     });
 });
 ```
+In above example requesting
+- POST /users/1 '<>...</>' will return user-one xml
+- POST /users/2 '<>...</>' will return user-two xml
+
+### Return respective response via request hashes
+
+Each request uniquely generates hash from method, url and body. This
+hash can be used to respond with respective data;
+
+```javascript
+const fruits = {
+    "af7f992f-8489a5de": { name: 'apple' },
+    "af7f992f-84a91dee": { name: 'banana' },
+}
+
+Mimic.root.post('/fruits', (req, res) => {
+    const requestHash = res.locals.requestHash.combined;
+    const data = fruits[requestHash];
+    if (!data) {
+        throw Error('Not found');
+    }
+    res.json(data);
+});
+```
+
+In above example requesting 
+- POST /fruits { "id": "a" } will generate hash "af7f992f-8489a5de"
+- POST /fruits { "id": "b" } will generate hash "af7f992f-84a91dee"
+
+requestHash can be obtained via res.locals.requestHash object
+```
+{
+    methodUrl: string;  // hash of method+url
+    body: string;       // hash of body if exists or is empty
+    combined: string;   // combiniation of hashes of methodUrl and body
+}
+```

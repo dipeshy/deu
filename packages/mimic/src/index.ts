@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 
+export * from './utils/request-utils';
+
 import { Router } from 'express';
 import * as http from 'http';
 import { resolve } from 'path';
 import yargs from 'yargs';
 import { createApp } from './app';
-import { debug } from './utils/debug';
+import { log } from './lib/logger';
 
 const argv = yargs
     .usage('Usage: [-d app-dir] [-p port]')
@@ -32,7 +34,7 @@ export namespace Mimic {
     export const root: Router = router;
 }
 
-debug(`Current working dir: ${appPath}`);
+log(`Current working dir: ${appPath}`);
 require(mainFile);
 /**
  * Get port from environment and store in Express.
@@ -77,11 +79,11 @@ function onError(error: any) {
     // handle specific listen errors with friendly messages
     switch (error.code) {
         case 'EACCES':
-            debug(bind + ' requires elevated privileges');
+            log(bind + ' requires elevated privileges');
             process.exit(1);
             break;
         case 'EADDRINUSE':
-            debug(bind + ' is already in use');
+            log(bind + ' is already in use');
             process.exit(1);
             break;
         default:
@@ -98,5 +100,5 @@ function onListening(): void {
     const bind = typeof addr === 'string'
         ? 'pipe ' + addr
         : 'port ' + addr.port;
-    debug('Listening on ' + bind);
+    log('Listening on ' + bind);
 }
