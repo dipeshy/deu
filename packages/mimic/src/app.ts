@@ -24,7 +24,12 @@ export function createApp({ templateDir }: Options): Output {
     log(`Template dir: ${templateDir}`);
     app.set('views', templateDir);
     app.set('view engine', 'ejs');
-    app.use(express.json());
+    app.use(express.json({
+        type: [
+            'application/x-amz-json-1.0',
+            'application/json',
+        ]
+    }));
     app.use(express.urlencoded({ extended: false }));
     app.use(cookieParser());
 

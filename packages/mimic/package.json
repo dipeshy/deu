@@ -1,6 +1,6 @@
 {
   "name": "@deu/mimic",
-  "version": "1.2.0-x.0",
+  "version": "1.2.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Dipesh Yadav <maxdipesh@gmail.com>",
