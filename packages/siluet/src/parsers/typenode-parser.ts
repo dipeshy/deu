@@ -10,9 +10,10 @@ import {
     LiteralTypeNode,
     isStringLiteral,
     isNumericLiteral,
+    IntersectionTypeNode,
 } from "typescript";
-import { getNameText } from "./common";
-import { toKebabCase } from "../string";
+import { getNameText } from "../utils/nodes/common";
+import { toKebabCase } from "../utils/string";
 
 export type PropReturnType = 
  | { type: 'string' | 'number' | 'boolean' | 'null' }
@@ -22,6 +23,8 @@ export type PropReturnType =
  | any;
 export function parseTypeNode(node: TypeNode): PropReturnType {
     switch(node.kind) {
+        case SyntaxKind.AnyKeyword:
+            return {};
         case SyntaxKind.StringKeyword:
             return { type: 'string' };
         case SyntaxKind.NumberKeyword:
@@ -41,12 +44,14 @@ export function parseTypeNode(node: TypeNode): PropReturnType {
             const arrayTypeNode = node as ArrayTypeNode;
             return {
                 type: 'array',
-                items: getReferenceBody(arrayTypeNode.elementType as TypeReferenceNode),
+                items: parseTypeNode(arrayTypeNode.elementType as TypeNode),
             };
         case SyntaxKind.TypeReference:
             return getReferenceBody(node as TypeReferenceNode);
         case SyntaxKind.UnionType:
             return parseUnionType(node as UnionTypeNode);
+        case SyntaxKind.IntersectionType:
+            return parseIntersectionType(node as IntersectionTypeNode);
         default:
             throw new Error('Unknown node kind: ' + node.kind);
     }
@@ -59,10 +64,18 @@ export function parseLiteralType(node: LiteralTypeNode) {
         };
     } else if (isNumericLiteral(node.literal)) {
         return {
-            type: 'string',
-            pattern: `^${node.literal.text}$`
+            type: 'number',
+            minimum: parseInt(node.literal.text),
+            maximum: parseInt(node.literal.text),
         };
-    } else {
+    } else if (node.literal.kind === SyntaxKind.TrueKeyword
+        || node.literal.kind === SyntaxKind.FalseKeyword
+    ) {
+        return {
+            type: 'boolean'
+        }
+    }
+    else {
         throw new Error('Unknown literal kind: ' + node.kind);
     }
 }
@@ -73,6 +86,16 @@ export function parseUnionType(node: UnionTypeNode) {
 
     return {
         oneOf: values,
+    };
+}
+
+export function parseIntersectionType(node: IntersectionTypeNode) {
+    const values: any[] = node.types.map((n) => {
+        return parseTypeNode(n);
+    });
+
+    return {
+        allOf: values,
     };
 }
 
@@ -91,9 +114,11 @@ export type ObjectBodyType = {
     required: string[]
     properties: {[key:string]: any}
 }
+
 export function parseObjectType(node: TypeLiteralNode | InterfaceDeclaration): ObjectBodyType {
     const required: string[] = [];
     const properties: {[key: string]: any} = {};
+    let additionalProperties = false;
 
     node.members.forEach((node) => {
         if (node.kind === SyntaxKind.PropertySignature) {
@@ -108,12 +133,14 @@ export function parseObjectType(node: TypeLiteralNode | InterfaceDeclaration): O
             if (isRequiredProperty(prop)) {
                 required.push(propName);
             }
-        };
+        } else if (node.kind === SyntaxKind.IndexSignature) {
+            additionalProperties = true;
+        }
     });
 
     return {
         type: "object",
-        additionalProperties: false,
+        additionalProperties,
         required,
         properties,
     }

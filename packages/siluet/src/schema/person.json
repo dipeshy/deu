@@ -1,0 +1,76 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "name",
+        "age",
+        "address",
+        "points",
+        "sex",
+        "children"
+    ],
+    "properties": {
+        "name": {
+            "$ref": "name-type.json"
+        },
+        "age": {
+            "type": "number"
+        },
+        "address": {
+            "$ref": "address.json"
+        },
+        "points": {
+            "type": "array",
+            "items": {
+                "$ref": ".json"
+            }
+        },
+        "sex": {
+            "oneOf": [
+                {
+                    "type": "string",
+                    "pattern": "^male$"
+                },
+                {
+                    "type": "string",
+                    "pattern": "^female$"
+                }
+            ]
+        },
+        "children": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "infant",
+                "toddler"
+            ],
+            "properties": {
+                "infant": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                        "name"
+                    ],
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "toddler": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                        "name"
+                    ],
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

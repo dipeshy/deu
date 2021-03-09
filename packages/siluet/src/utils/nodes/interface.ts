@@ -3,7 +3,7 @@ import {
 } from 'typescript';
 import {
     parseObjectType,
-} from './parse-types';
+} from '../../parsers/typenode-parser';
 import { getNameText } from './common';
 
 export function toJsonSchema(node: InterfaceDeclaration) {
