@@ -8,7 +8,8 @@
   "private": false,
   "scripts": {
     "dev": "node .",
-    "start": "node ."
+    "start": "node .",
+    "test": "jest --config=jest.config.js"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -18,5 +19,10 @@
     "http-proxy": "^1.18.1",
     "socket.io": "^3.1.2",
     "socket.io-client": "^3.1.2"
+  },
+  "devDependencies": {
+    "jest": "^26.6.3",
+    "nock": "^13.0.11",
+    "supertest": "^6.1.3"
   }
 }
