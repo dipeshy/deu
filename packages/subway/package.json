@@ -1,0 +1,27 @@
+{
+  "name": "@deu/subway",
+  "version": "0.0.0",
+  "description": "Tunnel proxy",
+  "main": "server.js",
+  "author": "Dipesh Yadav <maxdipesh@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dipeshy/deu",
+    "directory": "packages/subway"
+  },
+  "scripts": {
+    "dev": "node .",
+    "start": "node ."
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.5",
+    "express": "^4.17.1",
+    "http-proxy": "^1.18.1",
+    "socket.io": "^3.1.2",
+    "socket.io-client": "^3.1.2"
+  }
+}
