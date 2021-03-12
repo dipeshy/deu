@@ -1,0 +1,20 @@
+{
+  "name": "@deu/soap",
+  "version": "1.0.0",
+  "main": "index.js",
+  "types": "dist/index.d.ts",
+  "author": "Dipesh Yadav <maxdipesh@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "debug": "^4.3.1",
+    "xml-js": "^1.6.11",
+    "yargs": "^16.2.0"
+  },
+  "scripts": {
+    "dev": "node ./src/soap.js"
+  },
+  "bin": {
+    "deu-soap": "./src/soap.js"
+  }
+}
