@@ -2,14 +2,16 @@
 
 [Draft]
 
+![](./img/design.png)
+
 ```plantuml
-@startuml
+@startuml img/design.png
 
 
 rectangle bastion_host {
     component server
     interface http<<4003>>
-    interface ws<<3000>>
+    interface ws<<4003>>
 }
 
 rectangle laptop {
