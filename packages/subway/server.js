@@ -21,6 +21,12 @@ const server = app.listen(PORT, () => {
 const _subscriptions = {};
 const io = new socket.Server(server);
 
+app.get('/health', (_, resp) => {
+    resp.json({
+        health: 'OK',
+    });
+});
+
 app.all('/*', (req, resp) => {
     let responded = false;
     const event = {
