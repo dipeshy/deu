@@ -22,8 +22,6 @@ const socket = client.io(config.server, {
 });
 
 socket.on('request', async (message) => {
-    console.log(message);
-
     const { host, ...headers } = message.headers || {};
     const request = {
         method: message.method,
@@ -38,10 +36,16 @@ socket.on('request', async (message) => {
         request.data = message.body;
     }
 
-    const response = await axios.request({
-        baseURL: `http://localhost:${config.port}${message.path}`,
-        ...request,
-    });
+    let response;
+    try {
+        response = await axios.request({
+            baseURL: `http://localhost:${config.port}${message.path}`,
+            ...request,
+        });
+       
+    } catch (err) {
+        response = err.response;
+    }
 
     socket.emit('response', {
         status: response.status,
