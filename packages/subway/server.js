@@ -38,19 +38,22 @@ app.all('/*', (req, resp) => {
     const targetGroup = req.headers['x-proxy-tg'];
     const client = _subscriptions[targetGroup];
     if (!(targetGroup && client)) {
+        resp.statusCode = 502;
         return resp.json({
-            message: 'default response',
+            message: `Client tg: ${targetGroup} not subscribed. Start client.js in local machine with tg configured ${targetGroup}`,
         });
     }
 
-    // io.emit('request', event);
     client.emit('request', event)
     client.onAny((event, message) => {
         client.offAny();
         if (!responded) {
             resp.statusCode = message.status;
             resp.statusMessage = message.statusText;
-            resp.json(message.data);
+            for (const [key, value] of Object.entries(message.headers || {})) {
+                resp.set(key, value);
+            }
+            resp.send(message.data);
             responded = true;
         }
     });
@@ -69,13 +72,14 @@ app.all('/*', (req, resp) => {
 
 
 io.on('connection', (socket) => {
-    const ns = socket.handshake.query.tg || 'default';
-    _subscriptions[ns] = socket;
+    const tg = socket.handshake.query.tg || 'default';
+    _subscriptions[tg] = socket;
     // Note: socket is connection to single user
     socket.on('disconnect', () => {
-        console.log('user disconnected');
+        console.log(`user disconnected and unsubscribed from tg: ${tg}`);
+        delete _subscriptions[tg];
     });
-    console.log('a user connected', {
+    console.log(`user connected and subscribed to tg: ${tg}`, {
         id: socket.id,
         client: socket.conn.id
     });
