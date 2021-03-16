@@ -49,6 +49,12 @@ const _iterateWSDL = async (outputDir, root, $parent = null) => {
     debug(`Type: ${type}, Name: ${fullName}, #Children: ${elements.length}`);
 
     switch(name) {
+        case 'schema':
+            // @todo this should be configurable
+            if (!root.attributes.elementFormDefault) {
+                root.attributes.elementFormDefault = 'qualified';
+            }
+            break;
         case 'import':
                 if (!$parent.attributes.targetNamespace) {
                     $parent.attributes.targetNamespace = root.attributes.namespace;
