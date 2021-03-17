@@ -13,6 +13,8 @@ app.use(bodyParser.json({
 }));
 
 const PORT = process.env.PORT || 4003;
+const TARGET_GROUP_HEADER = 'x-proxy-tg';
+const TARGET_GROUP_PARAM = '_tg';
 
 const server = app.listen(PORT, () => {
     console.log(`listening on *:${PORT}`);
@@ -32,7 +34,7 @@ app.all('/*', (req, resp) => {
     const event = {
         method: req.method,
         path: req.path,
-        params: req.params,
+        params: req.query,
         headers: req.headers,
         cookies: req.cookies,
     };
@@ -41,9 +43,15 @@ app.all('/*', (req, resp) => {
         event.body = req.body;
     }
 
-    const targetGroup = req.headers['x-proxy-tg'];
+    console.log('Received request', event);
+    const targetGroup = req.headers[TARGET_GROUP_HEADER] || req.query[TARGET_GROUP_PARAM];
+    if (!targetGroup) {
+        return resp.json({
+            message: `No targetGroup in request`,
+        });
+    }
     const client = _subscriptions[targetGroup];
-    if (!(targetGroup && client)) {
+    if (!client) {
         resp.statusCode = 502;
         return resp.json({
             message: `Client tg: ${targetGroup} not subscribed. Start client.js in local machine with tg configured ${targetGroup}`,
