@@ -1,17 +1,23 @@
 
 const { resolve, } = require('path');
+const { debug } = require('../lib/logger');
 
-// {
-//     tg: 'dita',
-//     server: 'ws://localhost:3000',
-//     port: 4000,
-//     routes: [
-//         { 
-//             uri: /^\/product/,
-//             target: 'http://localhost:5000',
-//         }
-//     ]
-// }
+/**
+ * Example config
+ * 
+ * {
+ *    tg: 'dita',
+ *    server: 'ws://localhost:3000',
+ *    port: 4000,
+ *    routes: [
+ *        { 
+ *            uri: /^\/product/,
+ *            target: 'http://localhost:5000',
+ *        }
+ *    ]
+ * }
+ */
+
 
 const CONFIG_FILE = 'subway.config.js';
 
@@ -22,7 +28,7 @@ class AppConfig {
     routes = [];
 
     constructor(homeDir) {
-        const configFile = resolve(homeDir, 'subway.config.js');
+        const configFile = resolve(homeDir, CONFIG_FILE);
         try {
             const document = require(configFile);
             this.tg = document.tg || this.tg;
@@ -30,8 +36,7 @@ class AppConfig {
             this.port = document.port || this.port;
             this.routes = document.routes || this.routes;
         } catch(err) {
-            // Warn config does not exist
-            console.warn(`Config ${configFile} does not exit. Using default values`);
+            debug(`Config ${configFile} does not exit. Using default values`);
         }
     }
 }
