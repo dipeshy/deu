@@ -10,12 +10,13 @@ const tryMakeDir = (dir) => {
                 recursive: true,
                 mode: '0755',
             });
+            return `Home dir ${dir} not found. Created.`;
         }
+        return `Home dir ${dir} exists`;
     } catch (error) {
-        throw new Error(`Failed to create dir ${dir}: ${error.message}`);
+        return `Failed to create dir ${dir}: ${error.message}`;
     }
 }
-
 
 module.exports = {
     tryMakeDir,
