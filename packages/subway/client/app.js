@@ -5,7 +5,7 @@ const client = require('socket.io-client');
 const axios = require('axios').default;
 const { createProxyServer, } = require('../lib/reverse-proxy');
 
-const main = ({config}) => {
+const main = (config) => {
     // Proxy server
     createProxyServer({
         routes: config.routes
