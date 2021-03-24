@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 const { debug } = require('../lib/logger');
 
 const client = require('socket.io-client');
