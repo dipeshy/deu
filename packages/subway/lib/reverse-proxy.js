@@ -1,5 +1,6 @@
 const http = require('http');
 const httpProxy = require('http-proxy');
+const { debug } = require('../lib/logger');
 
 const createProxyServer = ({routes, }) => {
     const proxy = httpProxy.createProxyServer({});
@@ -12,16 +13,22 @@ const createProxyServer = ({routes, }) => {
         }
         for (const { uri, target, } of routes) {
             if (uri.test(req.url)) {
-                proxy.web(req, res, { target, });
+                debug(`Proxying request to ${target}: ${req.method} ${req.url}`);
+                proxy.web(req, res, { target, }, (err) => {
+                    debug(err.message);
+                    res.statusCode = 502;
+                    res.statusMessage = 'Gateway Connection Refused';
+                    res.end();
+                });
                 return;
             }
         }
 
+        debug(`No mapping configured for: ${req.method} ${req.url}`);
         res.statusCode = 501;
         res.statusMessage = 'Not implemented';
         res.end();
     });
-
     return server;
 };
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const { debug } = require('../lib/logger');
 
 const client = require('socket.io-client');
 const axios = require('axios').default;
@@ -9,7 +10,7 @@ const main = ({config}) => {
     createProxyServer({
         routes: config.routes
     }).listen(config.port, () => {
-        console.log(`reverse proxy on port ${config.port}`);
+        debug(`Listening to reverse proxy on port:${config.port}`);
     });
     
     // Remote proxy. Connect to remote server
