@@ -18,6 +18,4 @@ class AppContext {
     }
 }
 
-module.exports = {
-    appContext: new AppContext(),
-};
+exports.appContext = new AppContext();
