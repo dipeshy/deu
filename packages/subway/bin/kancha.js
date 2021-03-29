@@ -74,7 +74,7 @@ require('yargs')
 function start() {
     var outfile = openSync(CHILD_OUTFILE, 'w');
     const child = spawn('node', [
-            resolve(__dirname, '../client/index.js')
+            resolve(__dirname, '../valet/index.js')
         ], {
         env: {
             ...process.env,
