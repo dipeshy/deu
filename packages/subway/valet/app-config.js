@@ -24,8 +24,10 @@ const CONFIG_FILE = 'subway.config.js';
 class AppConfig {
     tg = 'subway';
     server = 'ws://localhost:3000';
+    adminPort = 5003;
     port = 4000;
     routes = [];
+    services = [];
 
     constructor(homeDir) {
         const configFile = resolve(homeDir, CONFIG_FILE);
@@ -35,6 +37,8 @@ class AppConfig {
             this.server = document.server || this.server;
             this.port = document.port || this.port;
             this.routes = document.routes || this.routes;
+            this.adminPort = document.adminPort || this.adminPort;
+            this.services = document.services || this.services;
         } catch(err) {
             debug(`Config ${configFile} does not exit. Using default values`);
         }

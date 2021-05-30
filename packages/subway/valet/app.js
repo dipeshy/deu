@@ -3,6 +3,7 @@ const { debug } = require('../lib/logger');
 const client = require('socket.io-client');
 const axios = require('axios').default;
 const { createProxyServer, } = require('../lib/reverse-proxy');
+const { app, } = require('./admin-app');
 
 const main = (config) => {
     // Proxy server
@@ -12,6 +13,12 @@ const main = (config) => {
         debug(`Listening to reverse proxy on port:${config.port}`);
     });
     
+    // Start admin
+    app.locals.config = config;
+    app.listen(config.adminPort, () => {
+        debug(`Listening admin on port:${config.adminPort}`);
+    });
+
     // Remote proxy. Connect to remote server
     const socket = client.io(config.server, {
         query: {

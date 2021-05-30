@@ -2,6 +2,7 @@ const { AppConfig } = require('./app-config');
 const { debug } = require('../lib/logger');
 const { appContext } = require('../lib/app-context');
 
+console.log(1);
 const { main, } = require('./app')
 
 const config = new AppConfig(appContext.homeDir);
